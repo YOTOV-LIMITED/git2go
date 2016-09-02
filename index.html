@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Git2go by YOTOV-LIMITED</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Git2go</h1>
+      <h2 class="project-tagline">Git to Go. Like McDonald&#39;s but tastier.</h2>
+      <a href="https://github.com/YOTOV-LIMITED/git2go" class="btn">View on GitHub</a>
+      <a href="https://github.com/YOTOV-LIMITED/git2go/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/YOTOV-LIMITED/git2go/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="git2go" class="anchor" href="#git2go" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>git2go</h1>
+
+<p><a href="http://godoc.org/github.com/libgit2/git2go"><img src="https://godoc.org/github.com/libgit2/git2go?status.svg" alt="GoDoc"></a> <a href="https://travis-ci.org/libgit2/git2go"><img src="https://travis-ci.org/libgit2/git2go.svg?branch=master" alt="Build Status"></a></p>
+
+<p>Go bindings for <a href="http://libgit2.github.com/">libgit2</a>. The <code>master</code> branch follows the latest libgit2 release. The versioned branches indicate which libgit2 version they work against.</p>
+
+<h2>
+<a id="installing" class="anchor" href="#installing" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installing</h2>
+
+<p>This project wraps the functionality provided by libgit2. If you're using a stable version, install it to your system via your system's package manager and then install git2go as usual.</p>
+
+<p>Otherwise (<code>next</code> which tracks an unstable version), we need to build libgit2 as well. In order to build it, you need <code>cmake</code>, <code>pkg-config</code> and a C compiler. You will also need the development packages for OpenSSL and LibSSH2 installed if you want libgit2 to support HTTPS and SSH respectively.</p>
+
+<h3>
+<a id="stable-version" class="anchor" href="#stable-version" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Stable version</h3>
+
+<p>git2go has <code>master</code> which tracks the latest release of libgit2, and versioned branches which indicate which version of libgit2 they work against. Install the development package on your system via your favourite package manager or from source and you can use a service like gopkg.in to use the appropriate version. For the libgit2 v0.22 case, you can use</p>
+
+<pre><code>import "gopkg.in/libgit2/git2go.v22"
+</code></pre>
+
+<p>to use a version of git2go which will work against libgit2 v0.22 and dynamically link to the library. You can use</p>
+
+<pre><code>import "github.com/libgit2/git2go"
+</code></pre>
+
+<p>to use the version which works against the latest release.</p>
+
+<h3>
+<a id="from-next" class="anchor" href="#from-next" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>From <code>next</code>
+</h3>
+
+<p>The <code>next</code> branch follows libgit2's master branch, which means there is no stable API or ABI to link against. git2go can statically link against a vendored version of libgit2.</p>
+
+<p>Run <code>go get -d github.com/libgit2/git2go</code> to download the code and go to your <code>$GOPATH/src/github.com/libgit2/git2go</code> directory. From there, we need to build the C code and put it into the resulting go binary.</p>
+
+<pre><code>git checkout next
+git submodule update --init # get libgit2
+make install
+</code></pre>
+
+<p>will compile libgit2. Run <code>go install</code> so that it's statically linked to the git2go package.</p>
+
+<h2>
+<a id="parallelism-and-network-operations" class="anchor" href="#parallelism-and-network-operations" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Parallelism and network operations</h2>
+
+<p>libgit2 uses OpenSSL and LibSSH2 for performing encrypted network connections. For now, git2go asks libgit2 to set locking for OpenSSL. This makes HTTPS connections thread-safe, but it is fragile and will likely stop doing it soon. This may also make SSH connections thread-safe if your copy of libssh2 is linked against OpenSSL. Check libgit2's <code>THREADSAFE.md</code> for more information.</p>
+
+<h2>
+<a id="running-the-tests" class="anchor" href="#running-the-tests" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Running the tests</h2>
+
+<p>For the stable version, <code>go test</code> will work as usual. For the <code>next</code> branch, similarly to installing, running the tests requires linking against the local libgit2 library, so the Makefile provides a wrapper</p>
+
+<pre><code>make test
+</code></pre>
+
+<p>Alternatively, if you want to pass arguments to <code>go test</code>, you can use the script that sets it all up</p>
+
+<pre><code>./script/with-static.sh go test -v
+</code></pre>
+
+<p>which will run the specified arguments with the correct environment variables.</p>
+
+<h2>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>License</h2>
+
+<p>M to the I to the T. See the LICENSE file if you've never seen a MIT license before.</p>
+
+<h2>
+<a id="authors" class="anchor" href="#authors" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Authors</h2>
+
+<ul>
+<li>Carlos Martín (<a href="https://github.com/carlosmn" class="user-mention">@carlosmn</a>)</li>
+<li>Vicent Martí (<a href="https://github.com/vmg" class="user-mention">@vmg</a>)</li>
+</ul>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/YOTOV-LIMITED/git2go">Git2go</a> is maintained by <a href="https://github.com/YOTOV-LIMITED">YOTOV-LIMITED</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
